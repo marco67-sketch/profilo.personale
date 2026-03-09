@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marco Fabiani - Sales & Marketing Leader</title>
+    <style>
+        :root {
+            --color-primary: #38bdf8;
+            --color-bg-dark: #0f172a;
+            --color-bg-darker: #020617;
+            --color-surface: #1e293b;
+            --color-text: #f1f5f9;
+            --color-text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: var(--color-bg-dark);
+            color: var(--color-text);
+            overflow: hidden;
+        }
+
+        /* Slide Container */
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slides-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .slide {
+            min-width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+            position: relative;
+        }
+
+        /* Navigation Controls */
+        .nav-controls {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-btn {
+            background: var(--color-surface);
+            border: none;
+            color: var(--color-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 1.2rem;
+        }
+
+        .nav-btn:hover {
+            background: var(--color-primary);
+            color: var(--color-bg-dark);
+            transform: scale(1.1);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            color: var(--color-text);
+            font-size: 0.9rem;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--color-surface);
+            z-index: 1000;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--color-primary);
+            transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Menu Toggle */
+        .menu-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1001;
+            background: var(--color-surface);
+            border: none;
+            color: var(--color-primary);
+            padding: 0.75rem 1.25rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .menu-toggle:hover {
+            background: var(--color-primary);
+            color: var(--color-bg-dark);
+        }
+
+        /* Slide Menu */
+        .slide-menu {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: var(--color-surface);
+            z-index: 1000;
+            padding: 6rem 2rem 2rem;
+            overflow-y: auto;
+            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .slide-menu.active {
+            right: 0;
+        }
+
+        .menu-item {
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: var(--color-bg-dark);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: var(--color-bg-darker);
+            border-left-color: var(--color-primary);
+            transform: translateX(5px);
+        }
+
+        .menu-item.active {
+            border-left-color: var(--color-primary);
+            background: var(--color-bg-darker);
+        }
+
+        .menu-item-number {
+            color: var(--color-primary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .menu-item-title {
+            color: var(--color-text);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .menu-item-desc {
+            color: var(--color-text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Slide Backgrounds */
+        .slide-hero {
+            background: linear-gradient(135deg, var(--color-bg-darker) 0%, var(--color-bg-dark) 100%);
+        }
+
+        .slide-content {
+            background: var(--color-bg-dark);
+        }
+
+        /* Profile Image */
+        .profile-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--color-primary);
+            box-shadow: 0 20px 60px rgba(56, 189, 248, 0.3);
+            margin-bottom: 2rem;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 3.5rem;
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            color: var(--color-primary);
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--color-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: var(--color-text-muted);
+            margin-bottom: 2rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 3rem;
+        }
+
+        .stat-card {
+            background: var(--color-surface);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .content-card {
+            background: var(--color-surface);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .content-card h3 {
+            margin-bottom: 1rem;
+        }
+
+        .content-card p {
+            color: var(--color-text-muted);
+            line-height: 1.6;
+        }
+
+        /* List Styles */
+        ul {
+            list-style: none;
+            max-width: 800px;
+        }
+
+        ul li {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: var(--color-surface);
+            border-radius: 8px;
+            border-left: 3px solid var(--color-primary);
+            line-height: 1.6;
+        }
+
+        ul li strong {
+            color: var(--color-primary);
+        }
+
+        /* Contact Info */
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            font-size: 1.1rem;
+            margin-top: 2rem;
+        }
+
+        .contact-info a {
+            color: var(--color-primary);
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .contact-info a:hover {
+            opacity: 0.7;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 2rem;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .stats-grid,
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .slide-menu {
+                width: 100%;
+                right: -100%;
+            }
+
+            .nav-controls {
+                padding: 0.75rem 1rem;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide.active h1,
+        .slide.active h2,
+        .slide.active .subtitle,
+        .slide.active .tagline {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .slide.active .profile-image {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- Menu Toggle -->
+    <button class="menu-toggle" onclick="toggleMenu()">☰ Menu</button>
+
+    <!-- Slide Menu -->
+    <div class="slide-menu" id="slideMenu">
+        <div class="menu-item active" onclick="goToSlide(0)">
+            <div class="menu-item-number">01</div>
+            <div class="menu-item-title">Introduction</div>
+            <div class="menu-item-desc">Sales & Marketing Leader</div>
+        </div>
+        <div class="menu-item" onclick="goToSlide(1)">
+            <div class="menu-item-number">02</div>
+            <div class="menu-item-title">About Me</div>
+            <div class="menu-item-desc">Experience & Expertise</div>
+        </div>
+        <div class="menu-item" onclick="goToSlide(2)">
+            <div class="menu-item-number">03</div>
+            <div class="menu-item-title">Key Metrics</div>
+            <div class="menu-item-desc">Results & Achievements</div>
+        </div>
+        <div class="menu-item" onclick="goToSlide(3)">
+            <div class="menu-item-number">04</div>
+            <div class="menu-item-title">Current Role</div>
+            <div class="menu-item-desc">NEXTIP Software</div>
+        </div>
+        <div class="menu-item" onclick="goToSlide(4)">
+            <div class="menu-item-number">05</div>
+            <div class="menu-item-title">Career Highlights</div>
+            <div class="menu-item-desc">Key Positions</div>
+        </div>
+        <div class="menu-item" onclick="goToSlide(5)">
+            <div class="menu-item-number">06</div>
+            <div class="menu-item-title">Core Competencies</div>
+            <div class="menu-item-desc">Skills & Expertise</div>
+        </div>
+        <div class="menu-item" onclick="goToSlide(6)">
+            <div class="menu-item-number">07</div>
+            <div class="menu-item-title">Clients & Partners</div>
+            <div class="menu-item-desc">Enterprise Portfolio</div>
+        </div>
+        <div class="menu-item" onclick="goToSlide(7)">
+            <div class="menu-item-number">08</div>
+            <div class="menu-item-title">Education</div>
+            <div class="menu-item-desc">Continuous Development</div>
+        </div>
+        <div class="menu-item" onclick="goToSlide(8)">
+            <div class="menu-item-number">09</div>
+            <div class="menu-item-title">What I Seek</div>
+            <div class="menu-item-desc">Future Opportunities</div>
+        </div>
+        <div class="menu-item" onclick="goToSlide(9)">
+            <div class="menu-item-number">10</div>
+            <div class="menu-item-title">Why Choose Me</div>
+            <div class="menu-item-desc">Value Proposition</div>
+        </div>
+        <div class="menu-item" onclick="goToSlide(10)">
+            <div class="menu-item-number">11</div>
+            <div class="menu-item-title">Contact</div>
+            <div class="menu-item-desc">Let's Connect</div>
+        </div>
+        <!-- ADD NEW SLIDES HERE: Copy menu-item structure and update onclick number -->
+    </div>
+
+    <!-- Presentation Container -->
+    <div class="presentation-container">
+        <div class="slides-wrapper" id="slidesWrapper">
+
+            <!-- SLIDE 1: Hero/Introduction -->
+            <div class="slide slide-hero active">
+                <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/4b5fbbba-1202-46a4-af33-b2f455d17d76" alt="Marco Fabiani" class="profile-image">
+                <h1>Marco Fabiani</h1>
+                <p class="subtitle">SALES & MARKETING LEADER</p>
+                <p class="tagline">Digital Transformation • BPO • Contact Centre Solutions</p>
+                <p class="tagline">Milan, Italy • mf1967@outlook.it • linkedin.com/in/mfabiani</p>
+            </div>
+
+            <!-- SLIDE 2: About Me -->
+            <div class="slide slide-content">
+                <h2>About Me</h2>
+                <ul>
+                    <li><strong>Over 20 Years Experience</strong> - Professional with a solid background in Sales & Marketing B2B within the BPO/ICT sector, possessing deep knowledge of the Italian and international enterprise market.</li>
+                    <li><strong>Digital Transformation Specialist</strong> - Expert in innovative solutions for Contact Centres and Customer Experience, with concrete skills in AI, CRM, and omnichannel strategies applied to real-world contexts.</li>
+                    <li><strong>Track Record of Growth</strong> - Consistent revenue growth of 15-18% year-on-year, with proven ability for enterprise client acquisition and development of high-value strategic partnerships.</li>
+                </ul>
+            </div>
+
+            <!-- SLIDE 3: Key Metrics -->
+            <div class="slide slide-content">
+                <h2>Key Metrics</h2>
+                <p class="tagline" style="max-width: 800px; text-align: center;">Concrete and measurable results that define a professional journey of excellence within the BPO and digital transformation sector.</p>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">€1.5M+</div>
+                        <div class="stat-label">Contracts Closed</div>
+                        <p style="font-size: 0.85rem; margin-top: 0.5rem; color: var(--color-text-muted);">Client portfolio 2024-25</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">+15%</div>
+                        <div class="stat-label">Revenue Growth</div>
+                        <p style="font-size: 0.85rem; margin-top: 0.5rem; color: var(--color-text-muted);">Annual net increase</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">20+</div>
+                        <div class="stat-label">Years Experience</div>
+                        <p style="font-size: 0.85rem; margin-top: 0.5rem; color: var(--color-text-muted);">BtoB Sales & Marketing</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">10+</div>
+                        <div class="stat-label">Enterprise Clients</div>
+                        <p style="font-size: 0.85rem; margin-top: 0.5rem; color: var(--color-text-muted);">Active portfolio</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 4: Current Experience -->
+            <div class="slide slide-content">
+                <h2>Current Experience</h2>
+                <h3 style="margin-bottom: 0.5rem;">Sales & Marketing Manager • NEXTIP Software</h3>
+                <p class="tagline" style="margin-bottom: 2rem;">Milan • 2024 - Present</p>
+                <div class="content-grid">
+                    <div class="content-card">
+                        <h3>💰 Revenue Acquisition</h3>
+                        <p>Closed contracts for <strong style="color: var(--color-primary);">€1.5M+</strong>, increasing net revenue by <strong style="color: var(--color-primary);">15%</strong> in 2025 through structured commercial strategy.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>🤖 AI in Contact Centre</h3>
+                        <p>Implemented the <strong style="color: var(--color-primary);">first 2 AI projects</strong> on platform, generating <strong style="color: var(--color-primary);">+10% upselling</strong> and increasing customer lifetime value.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>🤝 Strategic Partnerships</h3>
+                        <p>Developed key collaborations with <strong style="color: var(--color-primary);">Spitch</strong> and <strong style="color: var(--color-primary);">Kore AI</strong>, expanding technological ecosystem.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>📊 CRM & Engagement</h3>
+                        <p>Implemented <strong style="color: var(--color-primary);">HubSpot CRM</strong> with integrated customer engagement strategies to optimize pipeline and retention.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 5: Career Highlights -->
+            <div class="slide slide-content">
+                <h2>Career Highlights</h2>
+                <div class="content-grid">
+                    <div class="content-card">
+                        <h3>ANSA • 2004-08</h3>
+                        <p><strong>Commercial Director</strong></p>
+                        <p>Led commercial growth of Italy's most important news agency, contributing to <strong style="color: var(--color-primary);">€117M in sales growth</strong> through customer development strategies.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>LA PRESSE • 2010-14</h3>
+                        <p><strong>Commercial & Marketing Director</strong></p>
+                        <p>Generated <strong style="color: var(--color-primary);">€4M in new business</strong> whilst developing innovative commercial solutions for digital and print news market.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>INGO • 2017-19</h3>
+                        <p><strong>Head of Sales</strong></p>
+                        <p>Acquired <strong style="color: var(--color-primary);">7 new clients in first year</strong>, demonstrating capability for rapid ramp-up in BPO sector.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>WEBHELP • 2021-23</h3>
+                        <p><strong>Sales Director Region</strong></p>
+                        <p>Directed sales division across <strong style="color: var(--color-primary);">Italy, Albania, Czech Rep, Slovakia</strong>, growing team and acquiring major international clients.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 6: Core Competencies -->
+            <div class="slide slide-content">
+                <h2>Core Competencies</h2>
+                <div class="content-grid">
+                    <div class="content-card">
+                        <h3>🚀 Digital Transformation</h3>
+                        <p>Design and implementation of CRM, AI and omnichannel solutions for Contact Centres. Practical experience with HubSpot, Spitch, Kore AI.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>📈 Sales Strategy</h3>
+                        <p>Development of direct and indirect sales strategies, with partner channel management and enterprise pipeline optimization.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>🎯 Account Management</h3>
+                        <p>Management of enterprise clients with multi-year contracts, focusing on retention, upselling and strategic relationships.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>👥 Team Leadership</h3>
+                        <p>Building and leading cross-functional sales teams in multi-country contexts, with strong results-oriented approach.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 7: Clients & Partners -->
+            <div class="slide slide-content">
+                <h2>Clients & Partners</h2>
+                <div style="max-width: 900px;">
+                    <div style="background: var(--color-surface); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+                        <h3>Enterprise Clients</h3>
+                        <p style="color: var(--color-text-muted); line-height: 1.8;">Payback • BRT • Veepee • Mondo Convenienza • Amplifon • Mediaworld • Aruba • Leroy Merlin • Auditel • Oppo Mobile</p>
+                    </div>
+                    <div style="background: var(--color-surface); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+                        <h3>Technology Partners</h3>
+                        <p style="color: var(--color-text-muted); line-height: 1.8;"><strong style="color: var(--color-primary);">Spitch</strong> (AI Voice Solutions) • <strong style="color: var(--color-primary);">Kore AI</strong> (Conversational AI) • <strong style="color: var(--color-primary);">HubSpot</strong> (CRM & Marketing) • <strong style="color: var(--color-primary);">Politecnico Milano</strong> (E-commerce Research)</p>
+                    </div>
+                    <div style="background: var(--color-surface); padding: 2rem; border-radius: 12px;">
+                        <h3>Sectors of Expertise</h3>
+                        <p style="color: var(--color-text-muted); line-height: 1.8;">BPO • Contact Centre • E-commerce • Energy • Retail • Telco • News Agency</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 8: Education -->
+            <div class="slide slide-content">
+                <h2>Education & Development</h2>
+                <ul>
+                    <li><strong>Google Prompting Essentials (2025)</strong> - Coursera. Certification in AI prompting skills, confirming continuous update on emerging technologies.</li>
+                    <li><strong>Challenger Sale Course (2022)</strong> - Challenger Performance. Consultative sales methodology for complex cycles and enterprise clients.</li>
+                    <li><strong>Digital Marketing Certification (2017)</strong> - SMStudy. Advanced skills in digital strategy, content marketing and performance marketing.</li>
+                    <li><strong>Business Management (2003)</strong> - SDA Bocconi, Milan. Excellence in management training with focus on strategy, finance and leadership.</li>
+                    <li><strong>Master International Marketing (1992)</strong> - Stevenson College, Edinburgh. International foundations of strategic marketing and business development.</li>
+                </ul>
+            </div>
+
+            <!-- SLIDE 9: What I Seek -->
+            <div class="slide slide-content">
+                <h2>What I Am Looking For</h2>
+                <div class="content-grid">
+                    <div class="content-card">
+                        <h3>💼 Commercial Leadership</h3>
+                        <p>A <strong style="color: var(--color-primary);">Sales or Commercial Director</strong> role in tech, BPO or SaaS organizations with growth ambitions, where I can bring strategic vision and deliver tangible results from day one.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>🤖 Digital Transformation & AI</h3>
+                        <p>Contexts that value practical experience in implementing <strong style="color: var(--color-primary);">AI, CRM and omnichannel solutions</strong> for Contact Centres and advanced Customer Experience.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>🌍 International Environments</h3>
+                        <p>Organizations with <strong style="color: var(--color-primary);">European or global reach</strong>, where my multi-country experience and international education become a competitive advantage.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>🤝 Strategic Partnerships</h3>
+                        <p>Opportunities that leverage my ability to <strong style="color: var(--color-primary);">build technological and commercial partner ecosystems</strong> to accelerate growth.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 10: Why Choose Me -->
+            <div class="slide slide-content">
+                <h2>Why Choose Me</h2>
+                <div class="content-grid">
+                    <div class="content-card">
+                        <h3>📊 Proven Results</h3>
+                        <p>Documented and measurable track record from €117M in sales growth at ANSA to €1.5M in new contracts at NEXTIP. Every role has produced tangible growth.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>💡 Applied Innovation</h3>
+                        <p>Not just theoretical knowledge of AI and digital - practical experience in implementing solutions within CRM, conversational AI, and omnichannel systems.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>🤝 Lasting Relationships</h3>
+                        <p>Demonstrated ability to build strategic long-term partnerships with enterprise clients and technology partners, generating mutual value.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>🌍 International Vision</h3>
+                        <p>Education in Edinburgh, operational experience in four European countries, and an international network - a global perspective with strong Italian roots.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 11: Contact -->
+            <div class="slide slide-hero">
+                <img src="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/22caaff3-9eaa-4690-90f4-f633c79d493f" alt="Marco Fabiani" class="profile-image">
+                <h1>Let's Talk!</h1>
+                <p class="tagline" style="max-width: 600px; text-align: center;">I am available to discuss new collaboration opportunities. Whether it's a corporate role, a strategic project or simply an exchange of ideas - I'm ready to meet with you.</p>
+                <div class="contact-info">
+                    <p>📧 <a href="mailto:mf1967@outlook.it">mf1967@outlook.it</a></p>
+                    <p>💼 <a href="https://linkedin.com/in/mfabiani" target="_blank">linkedin.com/in/mfabiani</a></p>
+                    <p>📱 <a href="tel:+393358481966">+39 335 8481966</a></p>
+                    <p>📍 Milan, Italy</p>
+                </div>
+                <p style="margin-top: 2rem; color: var(--color-text-muted); font-size: 0.9rem;">I always respond within 24 hours</p>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- ADD NEW SLIDES BELOW THIS LINE -->
+            <!-- ============================================ -->
+            
+            <!-- TEMPLATE FOR NEW SLIDE (Copy and modify):
+            
+            <div class="slide slide-content">
+                <h2>Your New Slide Title</h2>
+                <p class="tagline">Optional subtitle or description</p>
+                <div class="content-grid">
+                    <div class="content-card">
+                        <h3>Section 1</h3>
+                        <p>Your content here...</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>Section 2</h3>
+                        <p>Your content here...</p>
+                    </div>
+                </div>
+            </div>
+            
+            -->
+
+            <!-- EXAMPLE: Case Study Slide (uncomment and modify)
+            
+            <div class="slide slide-content">
+                <h2>Case Study: [Client Name]</h2>
+                <p class="tagline">Industry: [Sector] • Duration: [Timeline] • Value: €[Amount]</p>
+                <div class="content-grid">
+                    <div class="content-card">
+                        <h3>🎯 Challenge</h3>
+                        <p>Describe the client's problem or need...</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>💡 Solution</h3>
+                        <p>Explain what you implemented...</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>📈 Results</h3>
+                        <p>Quantifiable outcomes and impact...</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>💬 Client Testimonial</h3>
+                        <p>"Quote from client..."<br><em>- Name, Title</em></p>
+                    </div>
+                </div>
+            </div>
+            
+            -->
+
+        </div>
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="nav-controls">
+        <button class="nav-btn" id="prevBtn" onclick="previousSlide()">←</button>
+        <span class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">11</span></span>
+        <button class="nav-btn" id="nextBtn" onclick="nextSlide()">→</button>
+    </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const slidesWrapper = document.getElementById('slidesWrapper');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const currentSlideSpan = document.getElementById('currentSlide');
+        const totalSlidesSpan = document.getElementById('totalSlides');
+        const progressFill = document.getElementById('progressFill');
+        const menuItems = document.querySelectorAll('.menu-item');
+
+        // Initialize
+        totalSlidesSpan.textContent = totalSlides;
+        updateSlide();
+
+        function updateSlide() {
+            slidesWrapper.style.transform = `translateX(-${currentSlideIndex * 100}vw)`;
+            currentSlideSpan.textContent = currentSlideIndex + 1;
+            
+            // Update progress bar
+            const progress = ((currentSlideIndex + 1) / totalSlides) * 100;
+            progressFill.style.width = `${progress}%`;
+            
+            // Update navigation buttons
+            prevBtn.disabled = currentSlideIndex === 0;
+            nextBtn.disabled = currentSlideIndex === totalSlides - 1;
+            
+            // Update active slide class
+            slides.forEach((slide, index) => {
+                if (index === currentSlideIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            // Update menu items
+            menuItems.forEach((item, index) => {
+                if (index === currentSlideIndex) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        function nextSlide() {
+            if (currentSlideIndex < totalSlides - 1) {
+                currentSlideIndex++;
+                updateSlide();
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                updateSlide();
+            }
+        }
+
+        function goToSlide(index) {
+            currentSlideIndex = index;
+            updateSlide();
+            toggleMenu(); // Close menu after navigation
+        }
+
+        function toggleMenu() {
+            const menu = document.getElementById('slideMenu');
+            menu.classList.toggle('active');
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') previousSlide();
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('slideMenu');
+                menu.classList.remove('active');
+            }
+        });
+
+        // Touch/swipe support
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) nextSlide();
+            if (touchEndX > touchStartX + 50) previousSlide();
+        }
+
+        // Mouse wheel navigation (optional, can be removed if too sensitive)
+        let scrollTimeout;
+        document.addEventListener('wheel', (e) => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                if (e.deltaY > 0) nextSlide();
+                if (e.deltaY < 0) previousSlide();
+            }, 100);
+        });
+    </script>
+
+</body>
+</html>
